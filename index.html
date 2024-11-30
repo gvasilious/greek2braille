@@ -7,7 +7,7 @@
   <style>
     @font-face {
       font-family: 'SimBraille';
-      src: url('simbrl.ttf') format('truetype');
+      src: url('unicode-simbraille-font.ttf') format('truetype');
     }
 
     @font-face {
@@ -20,11 +20,33 @@
       src: url('apple-braille-pinpoint-6-dot.ttf') format('truetype');
     }
 
-    .braille-text {
-      font-family: AppleBraillePinpoint6dot, DejaVu Sans, DejaVu, Apple Braille, sans-serif;
-      font-size: 30px;
-/*      letter-spacing: 1rem;*/ /* Space between characters */
+    @font-face {
+      font-family: 'DejaVuSans';
+      src: url('deja-vu-sans.ttf') format('truetype');
     }
+
+    @font-face {
+      font-family: 'DejaVuSerif';
+      src: url('deja-vu-serif.ttf') format('truetype');
+    }
+
+    .braille-text-dejavuserif {
+      font-family: DejaVuSerif, AppleBraillePinpoint6dot, DejaVu Sans, DejaVu, Apple Braille, sans-serif;
+      font-size: 30px;
+    }
+
+    .braille-text-dejavusans {
+      font-family: DejaVuSans, AppleBraillePinpoint6dot, DejaVu Sans, DejaVu, Apple Braille, sans-serif;
+      font-size: 30px;
+    }
+
+    .braille-text-simbraille {
+      font-family: SimBraille, AppleBraillePinpoint6dot, DejaVu Sans, DejaVu, Apple Braille, sans-serif;
+      font-size: 30px;
+    }
+
+
+
   </style>
 
   <script>
@@ -356,6 +378,10 @@
         return brailleText;
       }
 
+      function handleClick() {
+          document.getElementById('demo').innerHTML = convertGreekToBraille( document.getElementById('fname').value );
+      }
+
       // Example usage
       //const greekText = 'Γειά σας'; // Replace with your Greek text
       //const brailleText = convertGreekToBraille(greekText);
@@ -374,11 +400,12 @@
 
 
 <button type="button"
-onclick="document.getElementById('demo').innerHTML = convertGreekToBraille( document.getElementById('fname').value )">Convert</button>
+onclick="handleClick()">Convert</button>
 
 <p>
-Braille: <span id="demo" class="braille-text" ></span>
+Braille (DejaVu Serif): <span id="demo" class="braille-text-dejavuserif" ></span>
 </p>
+
 
 </body>
 </html> 
