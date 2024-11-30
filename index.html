@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+
+  <style>
+    @font-face {
+      font-family: 'SimBraille';
+      src: url('simbrl.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'AppleBraillePinpoint8dot';
+      src: url('apple-braille-pinpoint-8-dot.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'AppleBraillePinpoint6dot';
+      src: url('apple-braille-pinpoint-6-dot.ttf') format('truetype');
+    }
+
+    .braille-text {
+      font-family: AppleBraillePinpoint6dot, DejaVu Sans, DejaVu, Apple Braille, sans-serif;
+      font-size: 30px;
+/*      letter-spacing: 1rem;*/ /* Space between characters */
+    }
+  </style>
+
+  <script>
+
+    // Define a mapping of Greek characters to their Braille representations
+    const greekToBrailleMap = {
+      'α':	'⠁'	,
+      'β':	'⠃'	,
+      'γ':	'⠛'	,
+      'δ':	'⠙'	,
+      'ε':	'⠑'	,
+      'ζ':	'⠵'	,
+      'η':	'⠜'	,
+      'θ':	'⠹'	,
+      'ι':	'⠊'	,
+      'κ':	'⠅'	,
+      'λ':	'⠇'	,
+      'μ':	'⠍'	,
+      'ν':	'⠝'	,
+      'ξ':	'⠭'	,
+      'ο':	'⠕'	,
+      'π':	'⠏'	,
+      'ρ':	'⠗'	,
+      'σ':	'⠎'	,
+      'ς':	'⠎'	,
+      'τ':	'⠞'	,
+      'υ':	'⠽'	,
+      'φ':	'⠋'	,
+      'χ':	'⠓'	,
+      'ψ':	'⠯'	,
+      'ω':	'⠚'	,
+
+
+      'Α':	'⠁'	,
+      'Β':	'⠃'	,
+      'Γ':	'⠛'	,
+      'Δ':	'⠙'	,
+      'Ε':	'⠑'	,
+      'Ζ':	'⠵'	,
+      'Η':	'⠜'	,
+      'Θ':	'⠹'	,
+      'Ι':	'⠊'	,
+      'Κ':	'⠅'	,
+      'Λ':	'⠇'	,
+      'Μ':	'⠍'	,
+      'Ν':	'⠝'	,
+      'Ξ':	'⠭'	,
+      'Ο':	'⠕'	,
+      'Π':	'⠏'	,
+      'Ρ':	'⠗'	,
+      'Σ':	'⠎'	,
+      'Σ':	'⠎'	,
+      'Τ':	'⠞'	,
+      'Υ':	'⠽'	,
+      'Φ':	'⠋'	,
+      'Χ':	'⠓'	,
+      'Ψ':	'⠯'	,
+      'Ω':	'⠚'	,
+
+
+
+
+      'ά':	'⠐⠁'	,
+      'έ':	'⠐⠑'	,
+      'ή':	'⠐⠜'	,
+      'ί':	'⠐⠊'	,
+      'ϊ':	'⠊' ,
+      'ΐ':	'⠐⠊'	,
+      'ό':	'⠐⠕'	,
+      'ύ':	'⠐⠽'	,
+      'ϋ':	'⠽'	,
+      'ΰ':	'⠐⠽'	,
+      'ώ':	'⠐⠚'	,
+
+
+      'Ά':	'⠨⠐⠁'	,
+      'Έ':	'⠨⠐⠑'	,
+      'Ή':	'⠨⠐⠜'	,
+      'Ί':	'⠨⠐⠊'	,
+      'Ϊ':	'⠨⠊'	,
+      'Ϊ́':	'⠨⠐⠊'	,
+      'Ό':	'⠨⠐⠕'	,
+      'Ύ':	'⠨⠐⠽'	,
+      'Ϋ':	'⠨⠽'	,
+      'Ϋ́':	'⠨⠐⠽'	,
+      'Ώ':	'⠨⠐⠚'	,
+
+
+
+
+      'αι':	'⠣'	,
+      'ει':	'⠩'	,
+      'οι':	'⠪'	,
+      'υι':	'⠻'	,
+      'αυ':	'⠡'	,
+      'ευ':	'⠱'	,
+      'ηυ':	'⠳'	,
+      'ου':	'⠥'	,
+
+
+      'αί':	'⠐⠣'	,
+      'εί':	'⠐⠩'	,
+      'οί':	'⠐⠪'	,
+      'υί':	'⠐⠻'	,
+      'αύ':	'⠐⠱'	,
+      'εύ':	'⠐⠱'	,
+      'ηύ':	'⠐⠳'	,
+      'ού':	'⠐⠥'	,
+
+
+
+      'Αι':	'⠣'	,
+      'Ει':	'⠩'	,
+      'Οι':	'⠪'	,
+      'Υι':	'⠻'	,
+      'Αυ':	'⠡'	,
+      'Ευ':	'⠱'	,
+      'Ηυ':	'⠳'	,
+      'Ου':	'⠥'	,
+
+
+      'Αί':	'⠐⠣'	,
+      'Εί':	'⠐⠩'	,
+      'Οί':	'⠐⠪'	,
+      'Υί':	'⠐⠻'	,
+      'Αύ':	'⠐⠱'	,
+      'Εύ':	'⠐⠱'	,
+      'Ηύ':	'⠐⠳'	,
+      'Ού':	'⠐⠥'	,
+
+
+      '1':	'⠁'	,
+      '2':	'⠃'	,
+      '3':	'⠉'	,
+      '4':	'⠙'	,
+      '5':	'⠑'	,
+      '6':	'⠋'	,
+      '7':	'⠛'	,
+      '8':	'⠓'	,	
+      '9':	'⠊'	,
+      '0':	'⠚'	,
+      '.':	'⠲'	,
+      ',':	'⠂'	,
+      ';':	'⠢'	,
+      '?':    '⠢'	, // this is the same as ;. if not, uncomment line below
+      //'?':	'⠦'	,
+      '>':    '⠕'	,
+      '<':    '⠪'	,
+      '·':	'⠆'	,
+      ':':	'⠒'	,
+      ';':	'⠢'	,
+      '?':	'⠦'	,
+      ' ́':	'⠐'	,
+      '[':	'⠯'	, //XXX
+      ']':	'⠽'	, //XXX
+      '{':	'⠷'	, //XXX
+      '}':	'⠾'	, //XXX
+      '(':	'⠶'	,
+      ')':	'⠶'	,
+      '…':	'⠄⠄⠄'	, //XXX 
+      '!':	'⠖'	,
+      '·':	'⠆'	,
+      '-':	'⠤'	, //this is minus, not dash
+      '+':	'⠮'	,
+      '/':	'⠌'	,
+      '*':    '⠡'	, //this is the multiply sign
+      '%':	'⠒⠏'	,
+      '‰':	'⠒⠹'	, //this is dash, not minus
+      '—':	'⠤⠤⠤'	,
+      '«':	'⠦'	,
+      '»':	'⠴'	,
+      "'":    '⠄'	,
+      '=':    '⠭'	,
+      '€':    '⠈⠑'	,
+      '$':    '⠈⠎'	,
+      '@':    '⠈⠁'	,
+
+      'a':	'⠁'	,
+      'b':	'⠃'	,
+      'c':	'⠉'	,
+      'd':	'⠙'	,
+      'e':	'⠑'	,
+      'f':	'⠋'	,
+      'g':	'⠛'	,
+      'h':	'⠓'	,
+      'i':	'⠊'	,
+      'j':	'⠚'	,
+      'k':	'⠅'	,
+      'l':	'⠇'	,
+      'm':	'⠍'	,
+      'n':	'⠝'	,
+      'o':	'⠕'	,
+      'p':	'⠏'	,
+      'q':	'⠟'	,
+      'r':	'⠗'	,
+      's':	'⠎'	,
+      't':	'⠞'	,
+      'u':	'⠥'	,
+      'v':	'⠧'	,
+      'w':	'⠺'	,
+      'x':	'⠭'	,
+      'y':	'⠽'	,
+      'z':	'⠵'	,
+
+      'A':	'⠁'	,
+      'B':	'⠃'	,
+      'C':	'⠉'	,
+      'D':	'⠙'	,
+      'E':	'⠑'	,
+      'F':	'⠋'	,
+      'G':	'⠛'	,
+      'H':	'⠓'	,
+      'I':	'⠊'	,
+      'J':	'⠚'	,
+      'K':	'⠅'	,
+      'L':	'⠇'	,
+      'M':	'⠍'	,
+      'N':	'⠝'	,
+      'O':	'⠕'	,
+      'P':	'⠏'	,
+      'Q':	'⠟'	,
+      'R':	'⠗'	,
+      'S':	'⠎'	,
+      'T':	'⠞'	,
+      'U':	'⠥'	,
+      'V':	'⠧'	,
+      'W':	'⠺'	,
+      'X':	'⠭'	,
+      'Y':	'⠽'	,
+      'Z':	'⠵'	,
+
+    };
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Function to convert Greek text to Braille
+    function convertGreekToBraille(greekText) {
+      let brailleText = '';
+      let ch = '';
+      let mode_number = false;
+      let mode_capital_greek = false;
+      let mode_capital_english = false;
+
+  
+      for (let i = 0; i < greekText.length; i++) {
+          const greekChar = greekText[i];
+
+          if ((greekChar >= 'Α' && greekChar <= 'Ω')) {
+              if (mode_capital_greek == false) {
+                  mode_capital_greek = true;
+                  brailleText += '⠨';
+              }
+          } else {
+                  mode_capital_greek = false;
+          }
+
+          if ((greekChar >= 'A' && greekChar <= 'Z')) {
+              if (mode_capital_english == false) {
+                  mode_capital_english = true;
+                  brailleText += '⠠';
+              }
+          } else {
+              mode_capital_english = false;
+          }
+
+
+          if (i + 1 < greekText.length) { // this is to handle diphthongs
+              ch = greekText[i] + greekText[i+1];
+              const brailleChar = greekToBrailleMap[ch];
+
+              if (brailleChar) {
+                  brailleText += brailleChar;
+                  i = i + 1;
+                  continue;
+              } 
+          }
+
+          const brailleChar = greekToBrailleMap[greekChar];
+
+          if (greekChar >= '0' && greekChar <= '9') {
+              let numberText = greekChar;
+              while ((i + 1 < greekText.length) && (greekText[i + 1] >= '0' &&  greekText[i + 1] <= '9')) {
+                  i = i + 1;
+                  numberText += greekText[i];
+              }
+
+              // the following if handles the case of decimal numbers with . or ,
+              if ((i + 2 < greekText.length) && (greekText[i + 1] == '.' || greekText[i + 1] == ',') &&  (greekText[i + 2] >= '0' &&  greekText[i + 2] <= '9')) {
+                  i = i + 1;
+                  numberText += '.'; // if it is comma, use period, because commas are used as thousand separators
+                  while ((i + 1 < greekText.length) && (greekText[i + 1] >= '0' &&  greekText[i + 1] <= '9')) {
+                      i = i + 1;
+                      numberText += greekText[i];
+                  }
+              }
+
+              //numberText is a number with commas as thousands separators and period as separator for the decimal part
+              numberText = numberWithCommas(numberText)
+
+              console.log(numberText);
+
+
+              brailleText += '⠼';
+              for (let c of numberText) {
+                  if (c == ',') {
+                      brailleText += '⠄'; // this is the thousands separator
+                  }
+                  else if (c == '.') {
+                      brailleText += '⠂'; // this is the decimal separator
+                  }
+                  else {
+                      let b = greekToBrailleMap[c];
+                      brailleText += b;
+                  }
+              }
+              continue;
+          }
+
+          if (brailleChar) {
+            brailleText += brailleChar;
+          } else {
+            // If the character is not in the mapping, leave it as is
+            brailleText += greekChar;
+          }
+        }
+  
+        return brailleText;
+      }
+
+      // Example usage
+      //const greekText = 'Γειά σας'; // Replace with your Greek text
+      //const brailleText = convertGreekToBraille(greekText);
+      //console.log(brailleText);
+
+
+  </script>
+
+</head>
+<body>
+
+
+<h2>Greek to Braille</h2>
+
+Κείμενο: <input type="text" id="fname" name="fname" size="80"><br><br>
+
+
+<button type="button"
+onclick="document.getElementById('demo').innerHTML = convertGreekToBraille( document.getElementById('fname').value )">Convert</button>
+
+<p>
+Braille: <span id="demo" class="braille-text" ></span>
+</p>
+
+</body>
+</html> 
+
+
