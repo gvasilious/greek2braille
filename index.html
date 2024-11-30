@@ -298,8 +298,13 @@
 
           if ((greekChar >= 'Α' && greekChar <= 'Ω')) {
               if (mode_capital_greek == false) {
-                  mode_capital_greek = true;
-                  brailleText += '⠨';
+                  if (i + 1 < greekText.length && (greekText[i + 1] >= 'A' && greekText[i + 1] <= 'Ω')) {
+                      mode_capital_greek = true;
+                      brailleText += '⠨⠨';
+                  }
+                  else {
+                      brailleText += '⠨';
+                  }
               }
           } else {
                   mode_capital_greek = false;
@@ -307,8 +312,13 @@
 
           if ((greekChar >= 'A' && greekChar <= 'Z')) {
               if (mode_capital_english == false) {
-                  mode_capital_english = true;
-                  brailleText += '⠠';
+                  if (i + 1 < greekText.length && (greekText[i + 1] >= 'A' && greekText[i + 1] <= 'Z')) {
+                      mode_capital_english = true;
+                      brailleText += '⠠⠠';
+                  }
+                  else {
+                      brailleText += '⠠';
+                  }
               }
           } else {
               mode_capital_english = false;
