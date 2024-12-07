@@ -371,7 +371,7 @@
             if (isFloat(input.replace(/,/g, "."))) {
                 return input;
             }
-            else { /// XXX TODO if number is 123,234,490,55, all commas will be erroneously replaced with . (last one should remain comma)
+            else {
                 const firstComma = input.indexOf(",");
                 const lastComma = input.lastIndexOf(",");
 
